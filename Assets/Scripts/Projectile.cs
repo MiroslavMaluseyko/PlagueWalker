@@ -9,6 +9,7 @@ using UnityEngine.PlayerLoop;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] protected float speed;
+    [SerializeField] protected float lifeTimeSec;
     [SerializeField] protected float sphereRadius;
     [SerializeField] protected float maxDistance; 
     [SerializeField] protected LayerMask layerMask;
@@ -17,10 +18,17 @@ public class Projectile : MonoBehaviour
 
     public bool canMove;
 
+    private Coroutine destructionCoroutine;
+    private void Start()
+    {
+    }
+
     private void Update()
     {
         if (canMove)
         {
+            if(destructionCoroutine == null)
+                destructionCoroutine = StartCoroutine(ProjectileDestruction());
             var position = transform.position;
             position = Vector3.MoveTowards(position, position + transform.forward, speed*Time.deltaTime);
             transform.position = position;
@@ -46,5 +54,11 @@ public class Projectile : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + transform.forward*maxDistance,sphereRadius*radiusesScale);
+    }
+
+    private IEnumerator ProjectileDestruction()
+    {
+        yield return new WaitForSeconds(lifeTimeSec);
+        Destroy(gameObject);
     }
 }

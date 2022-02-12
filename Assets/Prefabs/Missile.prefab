@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  lifeTimeSec: 10
   sphereRadius: 0.5
   maxDistance: 0.1
   layerMask:
