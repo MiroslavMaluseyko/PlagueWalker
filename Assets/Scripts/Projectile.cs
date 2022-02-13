@@ -1,59 +1,49 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SearchService;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class Projectile : MonoBehaviour
 {
+    //moving speed
     [SerializeField] protected float speed;
+    //object will be destroyed after [lifeTimeSec] seconds
     [SerializeField] protected float lifeTimeSec;
+    //radius of sphereCast`s sphere
     [SerializeField] protected float sphereRadius;
+    //max distance for sphereCast
     [SerializeField] protected float maxDistance; 
+    //obstacle layer for spherecast
     [SerializeField] protected LayerMask layerMask;
-    
-    public float radiusesScale;
 
-    public bool canMove;
 
-    private Coroutine destructionCoroutine;
+    private ChargeableObj chargeScript;
+    private bool canMove;
+
     private void Start()
     {
+        chargeScript = GetComponent<ChargeableObj>();
     }
-
-    private void Update()
+    
+    //allow object to move and play all needed effects
+    public void Shoot()
+    {
+        StartCoroutine(ProjectileDestruction());
+        canMove = true;
+    }
+    
+    private void FixedUpdate()
     {
         if (canMove)
         {
-            if(destructionCoroutine == null)
-                destructionCoroutine = StartCoroutine(ProjectileDestruction());
             var position = transform.position;
             position = Vector3.MoveTowards(position, position + transform.forward, speed*Time.deltaTime);
             transform.position = position;
         }
-    }
-
-    private void FixedUpdate()
-    {
-        CheckObstacle();
-    }
-    
-    private void CheckObstacle()
-    {
-        
+        //checking for collision with obstacle 
         RaycastHit hit;
-        if (Physics.SphereCast(transform.position, sphereRadius*radiusesScale, transform.forward, out hit, maxDistance, layerMask))
+        if (Physics.SphereCast(transform.position, sphereRadius*chargeScript.currCharge, transform.forward, out hit, maxDistance, layerMask))
         {
             GetComponent<ExplosiveObj>()?.Explode();
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position + transform.forward*maxDistance,sphereRadius*radiusesScale);
     }
 
     private IEnumerator ProjectileDestruction()
@@ -61,4 +51,6 @@ public class Projectile : MonoBehaviour
         yield return new WaitForSeconds(lifeTimeSec);
         Destroy(gameObject);
     }
+    
+
 }

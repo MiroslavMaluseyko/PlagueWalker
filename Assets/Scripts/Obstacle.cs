@@ -1,19 +1,19 @@
-using System;
+
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 public class Obstacle : MonoBehaviour
 {
+    //is obstacle plagued or not
     [SerializeField] private bool plagued;
+    //renderer for color changing
     [SerializeField] private new Renderer renderer;
+    
+    //colors for healthy and plagued object
     [SerializeField] private Color normalColor;
     [SerializeField] private Color plagueColor;
 
-
-    private void Start()
-    {
-        SetPlague(plagued);
-    }
+    //effect after death
+    [SerializeField] private ParticleSystem deathEffect;
 
     public void SetPlague(bool isPlagued)
     {
@@ -27,8 +27,9 @@ public class Obstacle : MonoBehaviour
 
     private IEnumerator Death()
     {
-        Collider coll = GetComponentInChildren<Collider>();
-        coll.enabled = false;
-        yield return null;
+        yield return new WaitForSeconds(.1f);
+        AudioManager.Instance.Play("ObstacleExplosion");
+        Instantiate(deathEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
     }
 }

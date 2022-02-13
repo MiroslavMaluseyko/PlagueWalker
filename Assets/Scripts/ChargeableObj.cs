@@ -1,35 +1,28 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class ChargeableObj : MonoBehaviour
 {
+    //current charge is [minCharge] after creating object
     [SerializeField] private float minCharge;
+    //current charge can`t be higher then [maxCharge]
     [SerializeField] private float maxCharge;
-    [SerializeField] private float currCharge;
     [SerializeField] private Transform objectToCharge;
-
-    private Projectile projectile;
+    
+    
+    public float currCharge { get; private set; }
     private void Start()
     {
         currCharge = minCharge;
+        //set scale according to charge
         objectToCharge.localScale = Vector3.one * currCharge;
-        projectile = GetComponent<Projectile>();
-    }
-
-    private void Update()
-    {
     }
 
     public void AddCharge(float charge)
     {
+        if (objectToCharge == null) return;
         currCharge += charge;
         currCharge = Mathf.Min(maxCharge, Mathf.Max(minCharge, currCharge));
         objectToCharge.localScale = Vector3.one * currCharge;
-        projectile.radiusesScale = 1 * currCharge;
     }
     
 }

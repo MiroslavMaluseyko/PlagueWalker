@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9133410080015901008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5391877769168700593}
+  - component: {fileID: 197410349061144012}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: AudioManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5391877769168700593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133410080015901008}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 179.39113, y: 344.4777, z: -63.262756}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &197410349061144012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9133410080015901008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 491b8044c4f8a114ba1e7eeca2628dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Music
+    clip: {fileID: 8300000, guid: fb9c441d338f90940b240e44606acf75, type: 3}
+    isSfx: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: ObstacleExplosion
+    clip: {fileID: 8300000, guid: bbf8aa500fa42f649b9741157ce69ef5, type: 3}
+    isSfx: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: MissilePop
+    clip: {fileID: 8300000, guid: b251d29e457afa34187d9a98321bb3ff, type: 3}
+    isSfx: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Winning
+    clip: {fileID: 8300000, guid: ea4af56844e7ffe4fa3e0161898bcb84, type: 3}
+    isSfx: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Losing
+    clip: {fileID: 8300000, guid: b672f45a4af4f1c4b998ae35129eb24a, type: 3}
+    isSfx: 1
+    loop: 0
+    source: {fileID: 0}
+  sfxVolume: 1
+  musicVolume: 1

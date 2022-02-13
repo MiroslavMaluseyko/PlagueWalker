@@ -1,62 +1,68 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-
-enum PlayerState
-{
-    Charging,
-    Moving,
-    WaitingForShot,
-    WaitingForMove
-}
 
 public class Player : MonoBehaviour
 {
+    //moving speed
     [SerializeField] private float speed;
+    //Value when game lost
+    [SerializeField] private float minCharge;
+    //player`s 3d object
     [SerializeField] private GameObject playerSphere;
+    //point from where player shooting
     [SerializeField] private Transform gunpoint;
+    //prefab of missile to shoot
     [SerializeField] private ChargeableObj missilePrefab;
+    //distance at which the player will stop
     [SerializeField] private float distToObstacle;
+    //obstacle mask for rayCasting
     [SerializeField] private LayerMask layerMask;
+    
+    //current charge value
     public float charge;
 
-    private PlayerState currState;
-
+    private Rigidbody rb;
+    //chargeable script of missile for.. missile charging
     private ChargeableObj missile;
+    private bool isCharging;
+    
     private void Start()
     {
-        currState = PlayerState.WaitingForShot;
+        rb = GetComponent<Rigidbody>();
+        
+        //set player`s size according to charge
         playerSphere.transform.localScale = Vector3.one * charge;
-        transform.LookAt(GameManager.Instance.target.transform.position);
-        Quaternion rotation = transform.rotation;
-        rotation.x = 0;
-        transform.rotation = rotation;
+        
+        //turn player to face the target
+        Vector3 target = FindObjectOfType<Target>().transform.position;
+        Vector3 lookDir = target;
+        lookDir.y = transform.position.y;
+        transform.LookAt(lookDir);
+
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && currState == PlayerState.WaitingForShot && missile == null)
+        if (!GameManager.Instance.gamePaused)
         {
-            currState = PlayerState.Charging;
-            CreateMissile();
-        }
-        else if (Input.GetMouseButton(0) && currState == PlayerState.Charging)
-        {
-            RemoveCharge(GameManager.Instance.chargePerFrame);
-            missile.AddCharge(GameManager.Instance.chargePerFrame);
-        }
-        else if (Input.GetMouseButtonUp(0) && currState == PlayerState.Charging)
-        {
-            currState = PlayerState.WaitingForMove;
-            missile.GetComponent<Projectile>().canMove = true;
-        }
+            bool touching = Input.touches.Length > 0;
 
-        if (currState == PlayerState.WaitingForMove && missile == null)
-        {
-            currState = PlayerState.Moving;
-            StartCoroutine(MovingCoroutine());
+            if ((Input.GetMouseButtonDown(0)) || touching && !isCharging)
+            {
+                //checking for UI zone. We do not want shot when clicking on pause
+                if (Camera.main.ScreenToViewportPoint(Input.mousePosition).y > 0.9f) return;
+                CreateMissile();
+                isCharging = true;
+            }
+            else if ((Input.GetMouseButton(0) || touching) && isCharging)
+            {
+                RemoveCharge(GameManager.Instance.chargePerFrame);
+                missile.AddCharge(GameManager.Instance.chargePerFrame);
+            }
+            else if ((Input.GetMouseButtonUp(0) || !touching) && isCharging)
+            {
+                isCharging = false;
+                missile.GetComponent<Projectile>().Shoot();
+            }
         }
     }
 
@@ -71,27 +77,41 @@ public class Player : MonoBehaviour
         charge -= val;
         playerSphere.transform.localScale = Vector3.one * charge;
 
-        if (charge <= 0)
+        if (charge <= minCharge)
         {
             GameManager.Instance.GameOver();
         }
     }
 
-    private IEnumerator MovingCoroutine()
+    private void FixedUpdate()
     {
-        RaycastHit hit;
-        while (!Physics.SphereCast(transform.position, charge/2, transform.forward, out hit, distToObstacle,
-                   layerMask))
+        //player can`t moving during charging
+        if (!isCharging)
         {
-            
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed*Time.fixedDeltaTime);
-            yield return null;
+            RaycastHit hit;
+            if (!Physics.SphereCast(transform.position, charge / 2, transform.forward, out hit, distToObstacle,
+                    layerMask))
+            {
+                rb.MovePosition(rb.position + transform.forward * speed * Time.fixedDeltaTime);
+            }
         }
 
-        currState = PlayerState.WaitingForShot;
     }
-    
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Target"))
+        {
+            other.GetComponent<Door>()?.Open();
+        }
+        else if (other.CompareTag("Finish"))
+        {
+            GameManager.Instance.GameWin();
+        }
+    }
+
+
+    //for testing sphereCast
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
