@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +19,7 @@ public class SettingsUI : MonoBehaviour
     }
 
     //set slider positions to audio manager volume values
-    private void Start()
+    private void OnEnable()
     {
         sfxSlider.value = AudioManager.Instance.sfxVolume;
         musicSlider.value = AudioManager.Instance.musicVolume;

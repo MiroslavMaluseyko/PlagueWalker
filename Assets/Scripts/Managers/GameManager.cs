@@ -27,16 +27,6 @@ public class GameManager : MonoBehaviour
         
     }
 
-    private void Start()
-    {
-        if (PlayerPrefs.GetInt("FirstStart", 0) == 0)
-        {
-            PlayerPrefs.SetInt("FirstStart", 1);
-            AudioManager.Instance.ChangeMusicVolume(1f);
-            AudioManager.Instance.ChangeSfxVolume(1f);
-        }
-    }
-
     public void LoadLevel(string level)
     {
         Time.timeScale = 1f;
@@ -52,10 +42,13 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        AudioManager.Instance.Play("Losing");
-        Time.timeScale = 0;
-        Instance.gamePaused = true;
-        MenuManager.Instance.GameOver();
+        if (!Instance.gamePaused)
+        {
+            AudioManager.Instance.Play("Losing");
+            Time.timeScale = 0;
+            Instance.gamePaused = true;
+            MenuManager.Instance.GameOver();
+        }
     }
     
 

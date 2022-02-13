@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
         {
             bool touching = Input.touches.Length > 0;
 
-            if ((Input.GetMouseButtonDown(0)) || touching && !isCharging)
+            if ((Input.GetMouseButtonDown(0) || touching) && !isCharging)
             {
                 //checking for UI zone. We do not want shot when clicking on pause
                 if (Camera.main.ScreenToViewportPoint(Input.mousePosition).y > 0.9f) return;
@@ -79,6 +79,7 @@ public class Player : MonoBehaviour
 
         if (charge <= minCharge)
         {
+            isCharging = false;
             GameManager.Instance.GameOver();
         }
     }

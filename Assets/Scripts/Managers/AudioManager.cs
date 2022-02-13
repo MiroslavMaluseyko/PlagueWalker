@@ -48,8 +48,8 @@ public class AudioManager : MonoBehaviour
     private void Start()
     {
         //load volume settings
-        musicVolume = PlayerPrefs.GetFloat("MusicVolume");
-        sfxVolume = PlayerPrefs.GetFloat("SfxVolume");
+        Instance.musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1);
+        Instance.sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 1);
         
         //start playing main theme
         Play("Music");
@@ -69,9 +69,9 @@ public class AudioManager : MonoBehaviour
         }
         //set volume to source 
         if (s.isSfx) 
-            s.source.volume = sfxVolume;
+            s.source.volume = Instance.sfxVolume;
         else
-            s.source.volume = musicVolume;
+            s.source.volume = Instance.musicVolume;
         s.source.Play();
         playingNow.Add(s);
     }
@@ -81,10 +81,10 @@ public class AudioManager : MonoBehaviour
     public void ChangeSfxVolume(float vol)
     {
         PlayerPrefs.SetFloat("SfxVolume", vol);
-        sfxVolume = vol;
+        Instance.sfxVolume = vol;
         foreach (var sound in playingNow.Where(sound => sound.isSfx))
         {
-            sound.source.volume = sfxVolume;
+            sound.source.volume = Instance.sfxVolume;
         }
     }
     
@@ -92,10 +92,10 @@ public class AudioManager : MonoBehaviour
     public void ChangeMusicVolume(float vol)
     {
         PlayerPrefs.SetFloat("MusicVolume", vol);
-        musicVolume = vol;
+        Instance.musicVolume = vol;
         foreach (var sound in playingNow.Where(sound => !sound.isSfx))
         {
-            sound.source.volume = musicVolume;
+            sound.source.volume = Instance.musicVolume;
         }
     }
     
